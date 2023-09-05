@@ -1,54 +1,72 @@
 <!DOCTYPE html>
-<html lang="de">
+<html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Hello World PWA</title>
-  <link rel="manifest" href="manifest.json">
-  <meta name="apple-mobile-web-app-title" content="HelloPWA">
+  <title>Glocken App</title>
+
+  <!-- PWA meta tags -->
+  <link rel="manifest" href="/manifest.json">
+  <meta name="theme-color" content="#ffffff">
+
+  <!-- iOS meta tags -->
   <meta name="apple-mobile-web-app-capable" content="yes">
-  <meta name="apple-mobile-web-app-status-bar-style" content="default">
-  <link rel="apple-touch-icon" href="icon.png">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black">
+  <meta name="apple-mobile-web-app-title" content="Glocken App">
+  <link rel="apple-touch-icon" href="/icons/icon-192x192.png">
 
   <style>
     body {
-      margin: 0;
-      padding: 0;
-      overflow: hidden; /* Verhindert Scrollen */
       display: flex;
       justify-content: center;
       align-items: center;
       height: 100vh;
-      background-color: #ffffff;
+      margin: 0;
+      background-color: #f9f9f9;
     }
-    h1 {
+
+    .bell {
+      font-size: 100px;
       cursor: pointer;
-    }
-	h1 {
-      cursor: pointer;
-      font-size: 4em; /* Textgröße verdoppeln */
     }
   </style>
 </head>
 <body>
-  <h1 id="hello">Hello World</h1>
+  <span class="bell" role="button" aria-label="Klingel" tabindex="0">🔔</span>
 
   <script>
+    // Check if Service Workers are supported and register one
     if ('serviceWorker' in navigator) {
-      window.addEventListener('load', function() {
-        navigator.serviceWorker.register('service-worker.js')
+      navigator.serviceWorker.register('/service-worker.js')
         .then(function(registration) {
-          console.log('Service Worker registriert mit der Scope:', registration.scope);
+          console.log('Service Worker registered with scope:', registration.scope);
         })
         .catch(function(error) {
-          console.log('Service Worker Registrierung fehlgeschlagen:', error);
+          console.log('Service Worker registration failed:', error);
         });
-      });
     }
 
-    document.getElementById('hello').addEventListener('click', function() {
-      const randomColor = '#' + Math.floor(Math.random()*16777215).toString(16);
-      document.body.style.backgroundColor = randomColor;
+    // Request Notification permission
+    document.addEventListener("DOMContentLoaded", function() {
+      if (Notification.permission !== "granted") {
+        Notification.requestPermission();
+      }
     });
+
+    // Function to show a notification
+    function showNotification() {
+      if (Notification.permission === "granted") {
+        new Notification('Test');
+      } else if (Notification.permission !== "denied") {
+        Notification.requestPermission().then(permission => {
+          if (permission === "granted") {
+            new Notification('Test');
+          }
+        });
+      }
+    }
+
+    // Attach click event listener to the bell
+    document.querySelector('.bell').addEventListener('click', showNotification);
   </script>
 </body>
 </html>
