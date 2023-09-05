@@ -2,7 +2,7 @@
   "name": "Hello World PWA",
   "short_name": "HelloPWA",
   "description": "Ein einfaches Hello World Progressive Web App",
-  "start_url": "/",
+  "start_url": "./",
   "display": "standalone",
   "background_color": "#ffffff",
   "theme_color": "#000000",
